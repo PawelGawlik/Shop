@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sklep</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Wyszukiwarka rzeczy">
+    <meta name="author" content="Paweł Gawlik">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+    <script src="./javascripts/main.js" defer></script>
+</head>
+
+<body>
+    <div class="search">
+        <h1>Opcje wyszukiwania:</h1>
+        <form action="/" method="get">
+            <p>Cena:</p><br>
+            <input type="radio" name="price" value="up" checked>
+            <p>Rosnąco</p>
+            <input type="radio" name="price" value="down">
+            <p>Malejąco</p><br>
+            <p>Górna granica ceny:</p><input type="number" name="board"><br>
+            <button type="submit">Prześlij</button>
+        </form>
+    </div>
+    <div class="display">
+
+    </div>
+</body>
+
+</html>
