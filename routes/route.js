@@ -14,6 +14,15 @@ const disconnect = () => {
     client.close();
 }
 
+router.post("/", async (req, res) => {
+    const id = Number(req.body);
+    connect();
+    await items.deleteOne({ id });
+    await items.updateMany({ id: { $gt: id } }, { $inc: { id: -1 } });
+    disconnect();
+    res.redirect("back");
+})
+
 router.post("/item", async (req, res) => {
     const insFun = (param) => {              // funkcja zapisująca przedmiot w bazie
         const form = new multiparty.Form();
@@ -54,5 +63,9 @@ router.post("/search", async (req, res) => {
     const itemArr = await items.find({ name: reg }).toArray();
     disconnect();
     res.send(itemArr);
+})
+
+router.post("/all", (req, res) => {
+
 })
 module.exports = router;
