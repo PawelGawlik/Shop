@@ -46,8 +46,14 @@ router.post("/item", async (req, res) => {
     connect();
     const itemArr = await items.find().toArray();
     disconnect();
-    const id = itemArr[itemArr.length - 1].id + 1;
-    insFun(id);
+    let id;
+    if (itemArr.length) {
+        id = itemArr[itemArr.length - 1].id + 1;
+        insFun(id);
+    } else {
+        id = 1;
+        insFun(id);
+    }
 })
 
 router.get("/items", async (req, res) => {
@@ -65,7 +71,16 @@ router.post("/search", async (req, res) => {
     res.send(itemArr);
 })
 
-router.post("/all", (req, res) => {
-
+router.post("/all", async (req, res) => {
+    let itemArr;
+    connect();
+    if (req.body === "show") {
+        itemArr = await items.find().toArray();
+    } else {
+        await items.deleteMany();
+        itemArr = [];
+    }
+    disconnect();
+    res.send(itemArr);
 })
 module.exports = router;

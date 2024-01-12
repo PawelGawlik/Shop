@@ -39,7 +39,20 @@ APP.searchMethods = {
             param2.remove();
         })
     },
+    loophandle: function (el) {
+        const img = document.createElement("img");
+        img.setAttribute("src", el.source + `,${el.picture.toString("base64")}`);
+        const div = this.divcreate();
+        div.appendChild(img);
+        this.pcreate(el.id, div);
+        this.pcreate(el.name, div);
+        this.pcreate(el.price, div);
+        this.pcreate(el.desc, div);
+        const button = this.buttoncreate(div);
+        button.onclick = this.delfun.bind(this, el.id, div);
+    },
     all: function (param) {
+        this.removediv();
         fetch("/all", {
             method: "post",
             body: param,
@@ -47,8 +60,21 @@ APP.searchMethods = {
         }).then((res) => {
             return res.json();;
         }).then((data) => {
-
+            data.forEach(this.loophandle.bind(this));
         })
+    },
+    delorshow: function (param) {
+        if (param === "del") {
+            let message = prompt('Wpisz frazę: "usuń wszystko"');
+            if (message.toLowerCase() === "usuń wszystko") {
+                this.all(param);
+            }
+            else {
+                return;
+            }
+        } else {
+            this.all(param);
+        }
     },
     searching: function () {
         this.removediv();
@@ -61,26 +87,15 @@ APP.searchMethods = {
             return res.json();
         }).then((data) => {
             this.input.value = "";
-            data.forEach(el => {
-                const img = document.createElement("img");
-                img.setAttribute("src", el.source + `,${el.picture.toString("base64")}`);
-                const div = this.divcreate();
-                div.appendChild(img);
-                this.pcreate(el.id, div);
-                this.pcreate(el.name, div);
-                this.pcreate(el.price, div);
-                this.pcreate(el.desc, div);
-                const button = this.buttoncreate(div);
-                button.onclick = this.delfun.bind(this, el.id, div);
-            });
+            data.forEach(this.loophandle.bind(this));
         })
     }
 }
 
 APP.searchMethods.button.addEventListener("click", APP.searchMethods.searching.bind(APP.searchMethods));
 APP.searchMethods.alls[0].addEventListener("click", () => {
-    APP.searchMethods.all(show);
+    APP.searchMethods.delorshow("show");
 })
 APP.searchMethods.alls[1].addEventListener("click", () => {
-    APP.searchMethods.all(del);
+    APP.searchMethods.delorshow("del");
 })
