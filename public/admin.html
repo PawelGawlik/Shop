@@ -12,13 +12,13 @@
 
 <body>
     <h1>Dodaj przedmiot</h1>
-    <form action="/item" method="post" enctype="multipart/form-data">
+    <form action="/item/create" method="post" enctype="multipart/form-data">
         <p>Nazwa:</p><input name="name"><br>
         <p>Zdjęcie:</p><input type="file" name="picture"><br>
         <p>Cena:</p><input name="price"><br>
         <p>Opis:</p><textarea name="desc"></textarea><br>
         <input type="submit" value="Dodaj">
-        <img>
+        <input type="hidden" name="hidden">
     </form>
     <div>
 
