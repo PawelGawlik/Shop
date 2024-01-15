@@ -40,6 +40,8 @@ APP.searchMethods = {
             headers: { "Content-Type": "text/plain" }
         }).then(() => {
             param2.remove();
+        }).catch(() => {
+            location.pathname = "/error500.html";
         })
     },
     upfun: function (param) {
@@ -55,6 +57,8 @@ APP.searchMethods = {
             this.formtextarea.value = data.desc;
             APP.form.setAttribute("action", "/item/update");
             this.forminputs[4].value = data.id;
+        }).catch(() => {
+            location.pathname = "/error500.html";
         })
     },
     loophandle: function (el) {
@@ -81,6 +85,8 @@ APP.searchMethods = {
             return res.json();;
         }).then((data) => {
             data.forEach(this.loophandle.bind(this));
+        }).catch(() => {
+            location.pathname = "/error500.html";
         })
     },
     delorshow: function (param) {
@@ -108,6 +114,8 @@ APP.searchMethods = {
         }).then((data) => {
             this.input.value = "";
             data.forEach(this.loophandle.bind(this));
+        }).catch(() => {
+            location.pathname = "/error.html";
         })
     }
 }

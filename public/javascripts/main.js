@@ -38,6 +38,8 @@ APP.displayMethods = {
             })
             this.maxprice = Number(priceArr[priceArr.length - 1].price);
             data.forEach(this.loophandle.bind(this));
+        }).catch(() => {
+            location.pathname = "/error500.html";
         })
         return {
             divs: this.divs,
@@ -83,6 +85,8 @@ APP.sortMethods = {
                 UpDownArr.reverse();
             }
             UpDownArr.forEach(APP.displayMethods.loophandle.bind(APP.displayMethods));
+        }).catch(() => {
+            location.pathname = "/error500.html";
         })
         return {
             divs: this.divs,
