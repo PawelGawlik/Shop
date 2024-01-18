@@ -1,13 +1,27 @@
 const APP = {};
 APP.display = document.getElementsByClassName("display")[0];
 APP.div = document.getElementsByTagName("div")[0];
+APP.picture = document.getElementsByClassName("picture")[0];
+APP.button = APP.picture.getElementsByTagName("button")[0];
 
 // metody do operowania na divie z produktami
 
 APP.displayMethods = {
     divs: 0,
     maxprice: 0,
-    pcreate: function (content, parent) {                        // tworzenie elementów p
+    img: APP.picture.getElementsByTagName("img")[0],
+    imgclickfun: function (param) {
+        if (APP.picture.style.display = "block") {
+            APP.picture.style.display = "none";
+        }
+        APP.picture.style.display = "block";
+        this.img.setAttribute("src", param.source + `,${param.picture.toString("base64")}`);
+        const size = this.img.naturalWidth / this.img.naturalHeight;
+        this.img.style.height = "99vh";
+        this.img.style.width = `${99 * size}vh`;
+        APP.picture.style.top = `${scrollY}px`;
+    },
+    pcreate: function (content, parent) {                         // tworzenie elementów p
         const p = document.createElement("p");
         p.innerText = content;
         parent.appendChild(p);
@@ -20,6 +34,7 @@ APP.displayMethods = {
     loophandle: function (param) {
         const img = document.createElement("img");
         img.setAttribute("src", param.source + `,${param.picture.toString("base64")}`);
+        img.onclick = this.imgclickfun.bind(this, param);
         const div = this.divcreate();
         div.appendChild(img);
         this.pcreate(param.id, div);
@@ -36,7 +51,11 @@ APP.displayMethods = {
             priceArr.sort((param1, param2) => {
                 return Number(param1.price) - Number(param2.price);
             })
-            this.maxprice = Number(priceArr[priceArr.length - 1].price);
+            if (priceArr.length) {
+                this.maxprice = Number(priceArr[priceArr.length - 1].price);
+            } else {
+                this.maxprice = 0;
+            }
             data.forEach(this.loophandle.bind(this));
         }).catch(() => {
             location.pathname = "/error500.html";
@@ -103,3 +122,7 @@ if (location.search === "") {
         APP.sortMethods.start(data);
     });
 }
+APP.button.addEventListener("click", () => {
+    APP.picture.style.display = "none";
+    APP.displayMethods.img.setAttribute("src", "");
+})

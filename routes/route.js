@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const multiparty = require('multiparty');
+const config = require("../config.js");
 const mongo = require("mongodb");
-const client = new mongo.MongoClient("mongodb://localhost:27017");
+const client = new mongo.MongoClient(config.db);
 const db = client.db("shop");
 const items = db.collection("items");
-const connect = (param) => {
+const connect = async (param) => {
     try {
-        throw new Error("ble")
-        client.connect();
+        await client.connect();
     } catch (err) {
         param(err);
         return "error";
@@ -21,12 +21,18 @@ const disconnect = () => {
 
 router.post("/", async (req, res, next) => {
     const id = Number(req.body);
-    const err = connect(next);
+    const err = await connect(next);
     if (err === "error") {
         return;
     }
-    await items.deleteOne({ id });
-    await items.updateMany({ id: { $gt: id } }, { $inc: { id: -1 } });
+    try {
+        await items.deleteOne({ id });
+        await items.updateMany({ id: { $gt: id } }, { $inc: { id: -1 } });
+    } catch (err) {
+        disconnect();
+        next(err);
+        return;
+    }
     disconnect();
     res.redirect("back");
 })
@@ -54,11 +60,17 @@ router.post("/item/:param", async (req, res, next) => {
                         price: fields.price[0],
                         desc: fields.desc[0]
                     }
-                    const err2 = connect(next);
+                    const err2 = await connect(next);
                     if (err2 === "error") {
                         return;
                     }
-                    await items.insertOne(obj);
+                    try {
+                        await items.insertOne(obj);
+                    } catch (err) {
+                        disconnect();
+                        next(err);
+                        return;
+                    }
                     disconnect();
                     res.redirect("back");
                 })
@@ -79,24 +91,37 @@ router.post("/item/:param", async (req, res, next) => {
                     price: param3.price[0],
                     desc: param3.desc[0]
                 }
-                const err2 = connect(next);
+                const err2 = await connect(next);
                 if (err2 === "error") {
                     return;
                 }
-                await items.updateOne({ id: param1 }, {
-                    $set: obj
-                })
+                try {
+                    await items.updateOne({ id: param1 }, {
+                        $set: obj
+                    })
+                } catch (err) {
+                    disconnect();
+                    next(err);
+                    return;
+                }
                 disconnect();
                 res.redirect("back");
             })
         }
     }
     if (req.params.param === "create") {
-        const err = connect(next);
+        const err = await connect(next);
         if (err === "error") {
             return;
         }
-        const itemArr = await items.find().toArray();
+        let itemArr;
+        try {
+            itemArr = await items.find().toArray();
+        } catch (err) {
+            disconnect();
+            next(err);
+            return;
+        }
         disconnect();
         let id;
         if (itemArr.length) {
@@ -108,17 +133,23 @@ router.post("/item/:param", async (req, res, next) => {
         }
     } else {
         if (req.body.picture === "") {
-            const err = connect(next);
+            const err = await connect(next);
             if (err === "error") {
                 return;
             }
-            await items.updateOne({ id: Number(req.body.hidden) }, {
-                $set: {
-                    name: req.body.name,
-                    price: req.body.price,
-                    desc: req.body.desc
-                }
-            })
+            try {
+                await items.updateOne({ id: Number(req.body.hidden) }, {
+                    $set: {
+                        name: req.body.name,
+                        price: req.body.price,
+                        desc: req.body.desc
+                    }
+                })
+            } catch (err) {
+                disconnect();
+                next(err);
+                return;
+            }
             disconnect();
             res.redirect("back");
         } else {
@@ -135,36 +166,62 @@ router.post("/item/:param", async (req, res, next) => {
 })
 
 router.get("/items", async (req, res, next) => {
-    const err = connect(next);
+    const err = await connect(next);
     if (err === "error") {
         return;
     }
-    const itemArr = await items.find().toArray();
+    let itemArr;
+    try {
+        itemArr = await items.find().toArray();
+    } catch (err) {
+        disconnect();
+        next(err);
+        return;
+    }
     disconnect();
     res.send(itemArr);
 })
 
 router.post("/search", async (req, res, next) => {
     const reg = new RegExp(`^${req.body.trim()}`, "i");
-    const err = connect(next);
+    const err = await connect(next);
     if (err === "error") {
         return;
     }
-    const itemArr = await items.find({ name: reg }).toArray();
+    let itemArr;
+    try {
+        itemArr = await items.find({ name: reg }).toArray();
+    } catch (err) {
+        disconnect();
+        next(err);
+        return;
+    }
     disconnect();
     res.send(itemArr);
 })
 
 router.post("/all", async (req, res, next) => {
     let itemArr;
-    const err = connect(next);
+    const err = await connect(next);
     if (err === "error") {
         return;
     }
     if (req.body === "show") {
-        itemArr = await items.find().toArray();
+        try {
+            itemArr = await items.find().toArray();
+        } catch (err) {
+            disconnect();
+            next(err);
+            return;
+        }
     } else {
-        await items.deleteMany();
+        try {
+            await items.deleteMany();
+        } catch (err) {
+            disconnect();
+            next(err);
+            return;
+        }
         itemArr = [];
     }
     disconnect();
@@ -172,11 +229,18 @@ router.post("/all", async (req, res, next) => {
 })
 
 router.post("/update", async (req, res, next) => {
-    const err = connect(next);
+    const err = await connect(next);
     if (err === "error") {
         return;
     }
-    const itemArr = await items.find({ id: Number(req.body) }).toArray();
+    let itemArr;
+    try {
+        itemArr = await items.find({ id: Number(req.body) }).toArray();
+    } catch (err) {
+        disconnect();
+        next(err);
+        return;
+    }
     disconnect();
     res.send(itemArr[0]);
 })

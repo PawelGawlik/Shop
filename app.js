@@ -16,6 +16,7 @@ app.get("*", (req, res) => {
     })
 })
 app.use((err, req, res, next) => {
+    console.log("error2")
     res.status(500);
     res.sendFile("error500.html", {
         root: "./public"
