@@ -17,8 +17,13 @@ APP.displayMethods = {
         APP.picture.style.display = "block";
         this.img.setAttribute("src", param.source + `,${param.picture.toString("base64")}`);
         const size = this.img.naturalWidth / this.img.naturalHeight;
-        this.img.style.height = "99vh";
-        this.img.style.width = `${99 * size}vh`;
+        if (window.innerWidth > 500) {
+            this.img.style.height = "99vh";
+            this.img.style.width = `${99 * size}vh`;
+        } else {
+            this.img.style.height = `${320 / size}px`;
+            this.img.style.width = "320px";
+        }
         APP.picture.style.top = `${scrollY}px`;
     },
     pcreate: function (content, parent) {                         // tworzenie elementów p

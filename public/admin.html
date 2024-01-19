@@ -7,12 +7,13 @@
     <meta name="description" content="Wyszukiwarka rzeczy">
     <meta name="author" content="Paweł Gawlik">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="./stylesheets/main.css">
     <script src="./javascripts/admin.js" defer></script>
 </head>
 
 <body>
     <h1>Dodaj przedmiot</h1>
-    <form action="/item/create" method="post" enctype="multipart/form-data">
+    <form action="/item/create" method="post" enctype="multipart/form-data" class="insert">
         <p>Nazwa:</p><input name="name"><br>
         <p>Zdjęcie:</p><input type="file" name="picture"><br>
         <p>Cena:</p><input name="price"><br>
@@ -20,14 +21,11 @@
         <input type="submit" value="Dodaj">
         <input type="hidden" name="hidden">
     </form>
-    <div>
-
-    </div>
     <h1>Wyszukiwarka przedmiotów</h1>
     <div class="search">
         <button class="all">Pokaż wszystko</button>
         <button class="all">Usuń wszystko</button>
-        <input><br>
+        <input>
         <button class="find">Szukaj</button>
     </div>
     <div class="display">
