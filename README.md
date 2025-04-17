@@ -1,2 +1,2 @@
 Niewielki projekt oparty o node.js.
-a(./Public/index.html) 
+[Wejdź na stronę](./public/index.html) 
